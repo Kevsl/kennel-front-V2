@@ -16,11 +16,16 @@ import {
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
+type UpdateAnimalProps = {
+  animalProps: AnimalProps
+  setIsReloadNeeded: any
+  handleClose: any
+}
 export const UpdateAnimalForm = ({
   animalProps,
-}: {
-  animalProps: AnimalProps
-}) => {
+  setIsReloadNeeded,
+  handleClose,
+}: UpdateAnimalProps) => {
   const [name, setName] = useState('')
   const [boxId, setBoxId] = useState('')
   const [categoryId, setCategoryId] = useState('')
@@ -72,7 +77,6 @@ export const UpdateAnimalForm = ({
       !image ||
       !arrival ||
       !departure ||
-      !arrival ||
       !boxId ||
       !categoryId ||
       !userId
@@ -94,6 +98,8 @@ export const UpdateAnimalForm = ({
       updateAnimal(animalUpdateData)
         .then((res) => {
           console.log(res)
+          setIsReloadNeeded(true)
+          handleClose()
         })
         .catch((e) => console.log(e))
     }

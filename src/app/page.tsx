@@ -23,7 +23,10 @@ export default function Home() {
           animalsList.map((animal) => {
             return (
               <div key={animal.id}>
-                <Card animalProps={animal} />
+                <Card
+                  animalProps={animal}
+                  setIsReloadNeeded={setIsReloadNeeded}
+                />
               </div>
             )
           })}

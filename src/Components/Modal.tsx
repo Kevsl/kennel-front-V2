@@ -5,11 +5,15 @@ import { IoIosCloseCircleOutline } from 'react-icons/io'
 import { UpdateAnimalForm } from './UpdateAnimal'
 import { AnimalProps } from '@/Utils/types'
 
+type ModalUpdateProps = {
+  animalProps: AnimalProps
+  setIsReloadNeeded: any
+}
+
 export const ModalComponent = ({
   animalProps,
-}: {
-  animalProps: AnimalProps
-}) => {
+  setIsReloadNeeded,
+}: ModalUpdateProps) => {
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -44,7 +48,11 @@ export const ModalComponent = ({
             >
               <IoIosCloseCircleOutline color="#000" size={48} />
             </span>
-            <UpdateAnimalForm animalProps={animalProps} />
+            <UpdateAnimalForm
+              animalProps={animalProps}
+              setIsReloadNeeded={setIsReloadNeeded}
+              handleClose={handleClose}
+            />
           </div>
         </Box>
       </Modal>
