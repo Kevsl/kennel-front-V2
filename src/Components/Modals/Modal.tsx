@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { LoginForm } from './LoginForm'
+import { LoginForm } from '../Forms/LoginForm'
 import { Box, Modal } from '@mui/material'
 import { IoIosCloseCircleOutline } from 'react-icons/io'
-import { UpdateAnimalForm } from './UpdateAnimal'
+import { UpdateAnimalForm } from '../Forms/UpdateAnimal'
 import { AnimalProps } from '@/Utils/types'
 
 type ModalUpdateProps = {
@@ -41,19 +41,17 @@ export const ModalComponent = ({
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <div>
-            <span
-              className="absolute right-10 top-10 cursor-pointer"
-              onClick={handleClose}
-            >
-              <IoIosCloseCircleOutline color="#000" size={48} />
-            </span>
-            <UpdateAnimalForm
-              animalProps={animalProps}
-              setIsReloadNeeded={setIsReloadNeeded}
-              handleClose={handleClose}
-            />
-          </div>
+          <span
+            className="absolute right-10 top-10 cursor-pointer"
+            onClick={handleClose}
+          >
+            <IoIosCloseCircleOutline color="#000" size={48} />
+          </span>
+          <UpdateAnimalForm
+            animalProps={animalProps}
+            setIsReloadNeeded={setIsReloadNeeded}
+            handleClose={handleClose}
+          />
         </Box>
       </Modal>
     </div>

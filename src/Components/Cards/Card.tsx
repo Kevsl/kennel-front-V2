@@ -1,6 +1,6 @@
 import { AnimalProps } from '@/Utils/types'
 import React from 'react'
-import { ModalComponent } from './Modal'
+import { ModalComponent } from '../Modals/Modal'
 
 type ModalUpdateProps = {
   animalProps: AnimalProps
@@ -8,7 +8,7 @@ type ModalUpdateProps = {
 }
 export const Card = ({ animalProps, setIsReloadNeeded }: ModalUpdateProps) => {
   return (
-    <div className="my-4 ">
+    <div className="my-4">
       <div className="relative flex max-w-[24rem] flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md mx-4">
         <div className="relative m-0 overflow-hidden rounded-none bg-transparent bg-clip-border text-gray-700 shadow-none  h-96 object-contain w-full">
           <img

@@ -3,9 +3,8 @@ import {
   getAllBoxes,
   getAllCategories,
   getAllUsers,
-  updateAnimal,
+  insertAnimal,
 } from '@/Service/animals'
-import { register } from '@/Service/auth'
 import {
   AnimalProps,
   AnimalUpdateOrInsertProps,
@@ -13,30 +12,22 @@ import {
   CategoryProps,
   UserProps,
 } from '@/Utils/types'
-import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { ErrorMsg } from '../Error'
+import { InputTest } from '../InputTest'
 
-type UpdateAnimalProps = {
-  animalProps: AnimalProps
+type InsertAnimalProps = {
+  animalProps?: AnimalProps
   setIsReloadNeeded: any
   handleClose: any
 }
-export const UpdateAnimalForm = ({
+
+export const InsertAnimalForm = ({
   animalProps,
   setIsReloadNeeded,
   handleClose,
-}: UpdateAnimalProps) => {
-  const [name, setName] = useState('')
-  const [boxId, setBoxId] = useState('')
-  const [categoryId, setCategoryId] = useState('')
-  const [userId, setUserId] = useState('')
-  const [arrival, setArrival] = useState('')
-  const [departure, setDeparture] = useState('')
-  const [image, setImage] = useState('')
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  const [animalData, setAnimalData] = useState<AnimalProps>()
-
+}: InsertAnimalProps) => {
   const [boxesList, setBoxesList] = useState<BoxProps[]>()
   const [categoriesList, setcategoriesList] = useState<CategoryProps[]>()
   const [usersList, setUsersList] = useState<UserProps[]>()
@@ -55,66 +46,31 @@ export const UpdateAnimalForm = ({
     })
   }, [])
 
-  useEffect(() => {
-    if (!isLoaded && animalData) {
-      setName(animalData.name)
-      setImage(animalData.image)
-      setArrival(animalData?.arrival)
-      setDeparture(animalData?.departure)
-      setBoxId(animalData?.box.id)
-      setCategoryId(animalData?.category.id)
-      setUserId(animalData?.user.id)
-      setIsLoaded(true)
-    }
-  }, [])
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<AnimalUpdateOrInsertProps>()
 
-  const [error, setError] = useState('')
-  const { push } = useRouter()
-
-  function handleSubmit() {
-    if (
-      !name ||
-      !image ||
-      !arrival ||
-      !departure ||
-      !boxId ||
-      !categoryId ||
-      !userId
-    ) {
-      setError('Tu fais des bêtises Maurice')
-    } else {
-      let animalUpdateData = {
-        id: animalProps.id,
-        name: name,
-        image: image,
-        arrival: arrival,
-        departure: departure,
-        boxId: boxId,
-        categoryId: categoryId,
-        ownerId: userId,
-        created_at: animalProps.created_at,
-      }
-
-      updateAnimal(animalUpdateData)
-        .then((res) => {
-          console.log(res)
-          setIsReloadNeeded(true)
-          handleClose()
-        })
-        .catch((e) => console.log(e))
-    }
-  }
+  const onSubmit: SubmitHandler<AnimalUpdateOrInsertProps> = (data) =>
+    insertAnimal(data)
+      .then((res) => {
+        setIsReloadNeeded(true)
+        handleClose()
+      })
+      .catch((e) => console.log(e))
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-white w-1/2 mx-auto">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Update animal
+          Insert new animal
         </h2>
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <div className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label
               htmlFor="name"
@@ -123,13 +79,13 @@ export const UpdateAnimalForm = ({
               Animal name
             </label>
             <div className="mt-2">
-              <input
-                type="text"
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 indent-3"
-                onChange={(e) => setName(e.target.value)}
-                defaultValue={animalProps?.name}
+              <InputTest
+                register={register}
+                inputType="text"
+                inputName="name"
+                errorName={errors.name ? errors.name : null}
               />
+              {errors.name && <ErrorMsg error={'name'} />}
             </div>
           </div>
           <div>
@@ -142,15 +98,18 @@ export const UpdateAnimalForm = ({
             <div className="mt-2">
               <input
                 type="text"
-                required
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 indent-3"
-                onChange={(e) => setImage(e.target.value)}
-                defaultValue={animalProps?.image}
+                {...register('image', { required: true })}
               />
+              {errors.image && <ErrorMsg error={'image'} />}
+
               <div>
                 <p>Preview</p>
                 <img
-                  src={image || animalProps?.image}
+                  src={
+                    watch('image') ||
+                    'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGFuaW1hbHxlbnwwfHwwfHx8MA%3D%3D'
+                  }
                   className="w-32 h-32 object-cover"
                 />
               </div>
@@ -166,14 +125,11 @@ export const UpdateAnimalForm = ({
             </label>
             <div className="mt-2">
               <input
-                type="text"
-                required
+                type="date"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 indent-3"
-                onChange={(e) => setArrival(e.target.value)}
-                defaultValue={new Date(animalProps.arrival).toLocaleDateString(
-                  'FR'
-                )}
+                {...register('arrival', { required: true })}
               />
+              {errors.arrival && <ErrorMsg error={'arrival'} />}
             </div>
 
             <div>
@@ -185,14 +141,11 @@ export const UpdateAnimalForm = ({
               </label>
               <div className="mt-2">
                 <input
-                  type="text"
-                  required
+                  type="date"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 indent-3"
-                  onChange={(e) => setDeparture(e.target.value)}
-                  defaultValue={new Date(
-                    animalProps.departure
-                  ).toLocaleDateString('FR')}
+                  {...register('departure', { required: true })}
                 />
+                {errors.departure && <ErrorMsg error={'departure'} />}
               </div>
             </div>
             <div>
@@ -206,23 +159,20 @@ export const UpdateAnimalForm = ({
               </div>
               <div className="mt-2">
                 <select
-                  required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 indent-3"
-                  onChange={(e) => setCategoryId(e.target.value)}
+                  {...register('categoryId', { required: true })}
                 >
+                  <option></option>
                   {categoriesList &&
                     categoriesList.map((category) => {
                       return (
-                        <option
-                          selected={animalProps.category.id === category.id}
-                          key={category.id}
-                          value={category.id}
-                        >
+                        <option key={category.id} value={category.id}>
                           {category.name}
                         </option>
                       )
                     })}
                 </select>
+                {errors.categoryId && <ErrorMsg error={'category'} />}
               </div>
             </div>
             <div>
@@ -236,24 +186,19 @@ export const UpdateAnimalForm = ({
               </div>
               <div className="mt-2">
                 <select
-                  required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 indent-3"
-                  onChange={(e) => setBoxId(e.target.value)}
-                  defaultValue={animalProps.box.id}
+                  {...register('boxId', { required: true })}
                 >
                   {boxesList &&
                     boxesList.map((boxData) => {
                       return (
-                        <option
-                          selected={animalProps.box.id === boxData.id}
-                          value={boxData.id}
-                          key={boxData.id}
-                        >
+                        <option value={boxData.id} key={boxData.id}>
                           {boxData.name}
                         </option>
                       )
                     })}
                 </select>
+                {errors.boxId && <ErrorMsg error={'box'} />}
               </div>
             </div>
 
@@ -268,40 +213,31 @@ export const UpdateAnimalForm = ({
               </div>
               <div className="mt-2">
                 <select
-                  required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 indent-3"
-                  onChange={(e) => setUserId(e.target.value)}
+                  {...register('ownerId', { required: true })}
                 >
                   {usersList &&
                     usersList.map((user) => {
                       return (
-                        <option
-                          selected={animalProps.user.id === user.id}
-                          key={user.id}
-                          value={user.id}
-                        >
+                        <option key={user.id} value={user.id}>
                           {user.name}
                         </option>
                       )
                     })}
                 </select>
+                {errors.ownerId && <ErrorMsg error={'user'} />}
               </div>
             </div>
 
             <div>
-              <p className="text-red-600 text-italic">{error}</p>
-              <button
+              <input
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={() => {
-                  handleSubmit()
-                }}
-              >
-                Edit animal
-              </button>
+                className="my-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                value="Insert animal"
+              />
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
 'use client'
-import { Card } from '@/Components/Card'
-import { CardContainer } from '@/Components/CardContainer'
+import { Card } from '@/Components/Cards/Card'
+import { CardContainer } from '@/Components/Cards/CardContainer'
+import { AddAnimalModal } from '@/Components/Modals/AddAnimalModal'
 import { getAllAnimals } from '@/Service/animals'
 import { AnimalProps } from '@/Utils/types'
 import { useEffect, useState } from 'react'
@@ -18,11 +19,12 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <AddAnimalModal setIsReloadNeeded={setIsReloadNeeded} />
       <CardContainer>
         {animalsList &&
           animalsList.map((animal) => {
             return (
-              <div key={animal.id}>
+              <div key={animal.id} className="w-72">
                 <Card
                   animalProps={animal}
                   setIsReloadNeeded={setIsReloadNeeded}
