@@ -28,9 +28,11 @@ export const InsertAnimalForm = ({
   setIsReloadNeeded,
   handleClose,
 }: InsertAnimalProps) => {
-  const [boxesList, setBoxesList] = useState<BoxProps[]>()
+  const [boxesList, setBoxesList] = useState<BoxProps[]>([])
   const [categoriesList, setcategoriesList] = useState<CategoryProps[]>()
   const [usersList, setUsersList] = useState<UserProps[]>()
+
+  const [myName, setMyName] = useState('Kev')
 
   useEffect(() => {
     getAllBoxes().then((res) => {

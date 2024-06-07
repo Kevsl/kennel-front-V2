@@ -44,3 +44,14 @@ export type AnimalUpdateOrInsertProps = {
   ownerId: string
   categoryId: string
 }
+
+export enum Roles {
+  admin = 'ADMIN',
+  user = 'USER',
+  moderator = 'MODERATOR',
+}
+export enum Status {
+  active = 'ACTIVE',
+  inactive = 'INACTIVE',
+  pending = 'PENDING',
+}

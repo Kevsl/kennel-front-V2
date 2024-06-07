@@ -1,4 +1,4 @@
-import { AnimalProps, AnimalUpdateOrInsertProps } from '@/Utils/types'
+import { AnimalProps, AnimalUpdateOrInsertProps, Roles } from '@/Utils/types'
 import axios from 'axios'
 
 export async function getAllAnimals() {
@@ -136,6 +136,11 @@ export async function updateAnimal(animal: AnimalUpdateOrInsertProps) {
 export async function insertAnimal(animal: AnimalUpdateOrInsertProps) {
   let url = `${process.env.NEXT_PUBLIC_API_URL}animal/create`
 
+  let userRole = 'USER'
+
+  if (userRole === Roles.user) {
+    console.log('is a user')
+  }
   let axiosConfig = {
     headers: {
       'content-type': 'application/x-www-form-urlencoded;charset=utf-8',
