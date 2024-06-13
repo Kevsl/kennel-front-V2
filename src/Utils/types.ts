@@ -55,3 +55,24 @@ export enum Status {
   inactive = 'INACTIVE',
   pending = 'PENDING',
 }
+
+export type CryptoProps = {
+  created_at: string
+  id: string
+  image: string
+  name: string
+  quantity: number
+  updated_at: string
+  value: number
+}
+
+export type OffersProps = {
+  id: string
+  User: {
+    pseudo: string
+  }
+  amount: number
+  created_at: string
+  id_user: string
+  Crypto: CryptoProps
+}
